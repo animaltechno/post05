@@ -152,7 +152,7 @@ func ListUsers() ([]Userdata, error) {
 		if err != nil {
 			return Data, err
 		}
+	}
 		defer rows.Close()
 		return Data, nil
 	}
-}
