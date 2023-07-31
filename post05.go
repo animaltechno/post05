@@ -45,3 +45,43 @@ func exist(username string) int  {
 	defer rows.Close()
 	return userID
 }
+// AddUser adds a new user to the database
+// Returns new User ID
+// -1 if there wa an error
+func AddUser(d Userdata) int  {
+	d.Username = strings.ToLower(d.Username)
+	db, err := openConnection()
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	defer db.Close()
+
+	userID := exist(d.Username)
+	if userID != -1 {
+		fmt.Println("User already exists:", Username)
+		return -1
+	}
+
+	insertStatement := `insert into "users" ("username") values ($1)`
+	_, err = db.Exec(insertStatement, d.Username)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+
+	userID = exist(d.Username)
+	if userID == -1 {
+		return userID
+	}
+
+	insertStatement = `insert into "userdata" ("userid", "name", "surname", "description") values ($1, $2, $3, $4)`
+
+	_, err = db.Exec(insertStatement, userID, d.Name, d.Surname, d.Description)
+	if err != nil {
+		fmt.Println("db.Exec():", err)
+		return -1
+	}
+
+	return userID
+}
