@@ -14,7 +14,7 @@ var (
 	Port = 2345
 	Username = ""
 	Password = ""
-	Database = ""
+	Database = "postgres"
 )
 
 type Userdata struct {
