@@ -124,3 +124,35 @@ func DeleteUser(id int) error {
 
 	return nil
 }
+
+//
+func ListUsers() ([]Userdata, error) {
+	Data := []Userdata{}
+	db, err := openConnection()
+	if err != nil {
+		return Data, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`select "id", "username", "name", "surname", "description" FROM "users", "userdata" WHERE users.id = userdata.userid`)
+	if err != nil {
+		return Data, err
+	}
+
+	for rows.Next() {
+		var id int
+		var username string
+		var name string
+		var surname string
+		var description string
+		err = rows.Scan(&id, &username, &name, &surname, &description)
+		temp := Userdata{ID: id, Username: username, Name: name, Surname: surname, Description: description}
+
+		Data = append(Data, temp)
+		if err != nil {
+			return Data, err
+		}
+		defer rows.Close()
+		return Data, nil
+	}
+}
