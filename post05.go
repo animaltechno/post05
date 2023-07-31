@@ -85,3 +85,42 @@ func AddUser(d Userdata) int  {
 
 	return userID
 }
+
+// DeleteUser deletes an existing user
+func DeleteUser(id int) error {
+	db, err := openConnection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	statement := fmt.Sprintf(`SELECT "username" FROM "users" WHERE id=%d`, id)
+	rows, err := db.Query(statement)
+
+	var username string
+	for rows.Next() {
+		err = rows.Scan(&username)
+		if err != nil {
+			return err
+		}
+	}
+	defer rows.Close()
+
+	if exist(username) != id {
+		return fmt.Errorf("User with ID %d does not exist", id)
+	}
+
+	deleteStatement := `DELETE FROM "userdata" WHERE userid=$1`
+	_, err = db.Exec(deleteStatement, id)
+	if err != nil {
+		return err
+	}
+
+	deleteStatement = `DELETE FROM "users" where id=$1`
+	_, err = db.Exec(deleteStatement, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
