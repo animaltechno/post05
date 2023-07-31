@@ -1,3 +1,22 @@
+package post05
+
+import (
+	"database/sql"
+	"errors"
+	"fmt"
+	"strings"
+
+	_ "github.com/lib/pq"
+)
+
+var (
+	Hostname = ""
+	Port = 2345
+	Username = ""
+	Password = ""
+	Datanase = ""
+)
+
 type Userdata struct {
 	ID          int
 	Username    string
@@ -5,6 +24,7 @@ type Userdata struct {
 	Surname     string
 	Description string
 }
+
 func openConnection() (*sql.DB, error) {
 	// connection string
 	conn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", Hostname, Port, Username, Password, Datanase)
@@ -45,6 +65,8 @@ func exist(username string) int  {
 	defer rows.Close()
 	return userID
 }
+
+
 // AddUser adds a new user to the database
 // Returns new User ID
 // -1 if there wa an error
@@ -153,9 +175,10 @@ func ListUsers() ([]Userdata, error) {
 			return Data, err
 		}
 	}
-		defer rows.Close()
-		return Data, nil
-	}
+	defer rows.Close()
+	return Data, nil
+}
+
 // UpdateUser is for updating an existing user
 func UpdateUser(d Userdata) error  {
 	db, err := openConnection()
