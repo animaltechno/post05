@@ -1,3 +1,10 @@
+type Userdata struct {
+	ID          int
+	Username    string
+	Name        string
+	Surname     string
+	Description string
+}
 func openConnection() (*sql.DB, error) {
 	// connection string
 	conn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", Hostname, Port, Username, Password, Datanase)
